@@ -1,0 +1,24 @@
+{
+  "name": "rikka-studio",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A clean prompt workspace for OpenAI-compatible model APIs.",
+  "scripts": {
+    "dev": "echo \"Do not run dev server on the small VPS. Use npm run dev:local on a PC or deploy with Vercel.\" && exit 1",
+    "dev:local": "next dev --hostname 127.0.0.1",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.6.0"
+  },
+  "devDependencies": {}
+}

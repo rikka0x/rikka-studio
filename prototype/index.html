@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Rikka Studio</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <p class="eyebrow">Rikka Studio</p>
+      <h1>Prompt experiments, cleanly documented.</h1>
+      <p class="sub">Test prompts, review model outputs, and export reusable notes through OpenAI-compatible APIs.</p>
+    </section>
+
+    <section class="workspace">
+      <div class="panel editor">
+        <div class="panel-head">
+          <span>Prompt</span>
+          <span class="pill">Demo mode</span>
+        </div>
+        <label>System prompt</label>
+        <textarea>You are a concise assistant. Return structured notes.</textarea>
+        <label>User prompt</label>
+        <textarea>Turn this product idea into a clean README intro.</textarea>
+        <div class="row">
+          <input value="example-model" aria-label="model" />
+          <input value="0.7" aria-label="temperature" />
+        </div>
+        <button>Run prompt</button>
+      </div>
+
+      <div class="panel output">
+        <div class="panel-head">
+          <span>Output</span>
+          <span class="muted">markdown export ready</span>
+        </div>
+        <pre>Rikka Studio is a small web app for testing prompts, reviewing model outputs, and exporting structured AI workflow notes.
+
+It supports demo mode for public previews and server-side API mode for OpenAI-compatible providers.</pre>
+        <div class="meta">
+          <span>mode: demo</span>
+          <span>model: example-model</span>
+          <span>secrets: server-side only</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
