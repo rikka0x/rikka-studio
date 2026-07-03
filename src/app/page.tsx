@@ -244,7 +244,7 @@ export default function Home() {
       <header className="nav">
         <div className="navInner">
           <a className="brand" href="#top" aria-label="Rikka Studio home">
-            <img src="/favicon.png" alt="Rikka" className="logoImg" width={32} height={32} />
+            <img src="/logo.png" alt="Rikka" className="logoImg" width={32} height={32} />
             <span className="brandText">Rikka Studio</span>
           </a>
           <nav className="navLinks" aria-label="Primary">
@@ -681,7 +681,7 @@ export default function Home() {
         <div className="footerInner">
           <div className="footerBrand">
             <img
-              src="/favicon.png"
+              src="/logo.png"
               alt="Rikka"
               className="logoImg logoImgSmall"
               width={22}
