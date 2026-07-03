@@ -1,5 +1,9 @@
 # Rikka Studio
 
+![CI](https://github.com/rikka0x/rikka-studio/actions/workflows/ci.yml/badge.svg)
+![License](https://img.shields.io/github/license/rikka0x/rikka-studio)
+![Made with Next.js](https://img.shields.io/badge/made%20with-Next.js-000)
+
 A clean web workspace for prompt experiments.
 
 Rikka Studio helps creators and developers test prompts, review model output, and export reusable notes through OpenAI-compatible APIs.
