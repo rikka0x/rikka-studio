@@ -6,6 +6,10 @@ export const metadata = {
   description:
     "A small web workspace for testing prompts, reviewing model outputs, and exporting reusable notes through any OpenAI-compatible API.",
   metadataBase: new URL("https://rikka-studio.vercel.app"),
+  icons: {
+    icon: "/favicon.png",
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     title: "Rikka Studio",
     description:
