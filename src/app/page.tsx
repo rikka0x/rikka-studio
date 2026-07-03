@@ -2,7 +2,8 @@
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import type { GenerateResponse } from "../lib/types";
-import { MODEL_OPTIONS, DEFAULT_MODEL } from "../lib/models";
+import { MODEL_OPTIONS, DEFAULT_MODEL, DEFAULT_BASE_URL, LS_KEYS } from "../lib/models";
+import { callClientLLM, testClientConnection, validateBaseUrl } from "../lib/client-llm";
 
 type SamplePreset = {
   id: string;
@@ -27,7 +28,7 @@ const SAMPLE_PRESETS: SamplePreset[] = [
     description: "Spot issues and suggest refactors.",
     systemPrompt: "You are a senior reviewer. Be honest, specific, and brief. Use bullets.",
     userPrompt:
-      "Review this idea: a Next.js API route that proxies to an OpenAI-compatible provider, with a demo mode and server-side keys. What should I check before shipping?",
+      "Review this idea: a Next.js app that lets users bring their own API key and call an OpenAI-compatible provider directly from the browser. What should I check before shipping?",
   },
   {
     id: "outline",
@@ -40,6 +41,27 @@ const SAMPLE_PRESETS: SamplePreset[] = [
 ];
 
 const DEFAULT_PRESET = SAMPLE_PRESETS[0];
+
+type TestResult = { status: "idle" | "ok" | "fail"; message?: string };
+
+function getStored(key: string): string {
+  if (typeof window === "undefined") return "";
+  try {
+    return window.localStorage.getItem(key) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+function setStored(key: string, value: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (value) window.localStorage.setItem(key, value);
+    else window.localStorage.removeItem(key);
+  } catch {
+    // ignore quota / privacy-mode failures
+  }
+}
 
 function buildMarkdown(result: GenerateResponse | null, userPrompt: string, systemPrompt: string) {
   if (!result) return "";
@@ -72,10 +94,51 @@ export default function Home() {
   const [copied, setCopied] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
+  // API settings (client-side, localStorage-only)
+  const [showApiPanel, setShowApiPanel] = useState(false);
+  const [apiKey, setApiKey] = useState("");
+  const [apiKeyVisible, setApiKeyVisible] = useState(false);
+  const [baseUrl, setBaseUrl] = useState(DEFAULT_BASE_URL);
+  const [customModel, setCustomModel] = useState("");
+  const [baseUrlError, setBaseUrlError] = useState("");
+  const [testResult, setTestResult] = useState<TestResult>({ status: "idle" });
+  const [testing, setTesting] = useState(false);
+
+  const usingClientKey = Boolean(apiKey && !baseUrlError);
+
   const markdown = useMemo(
     () => buildMarkdown(result, userPrompt, systemPrompt),
     [result, userPrompt, systemPrompt],
   );
+
+  // Prefill from localStorage on mount. The API key is loaded into state but
+  // never logged or sent to our server — it only goes directly to the user's
+  // provider via fetch in callClientLLM().
+  useEffect(() => {
+    setApiKey(getStored(LS_KEYS.apiKey));
+    setBaseUrl(getStored(LS_KEYS.baseUrl) || DEFAULT_BASE_URL);
+    setCustomModel(getStored(LS_KEYS.customModel));
+  }, []);
+
+  // Validate base URL whenever it changes.
+  useEffect(() => {
+    if (!baseUrl) {
+      setBaseUrlError("");
+      return;
+    }
+    setBaseUrlError(validateBaseUrl(baseUrl) ?? "");
+  }, [baseUrl]);
+
+  // Persist credentials to localStorage whenever they change.
+  useEffect(() => {
+    setStored(LS_KEYS.apiKey, apiKey);
+  }, [apiKey]);
+  useEffect(() => {
+    setStored(LS_KEYS.baseUrl, baseUrl);
+  }, [baseUrl]);
+  useEffect(() => {
+    setStored(LS_KEYS.customModel, customModel);
+  }, [customModel]);
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
@@ -88,20 +151,37 @@ export default function Home() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // The effective model: custom input overrides the dropdown selection.
+  const effectiveModel = customModel.trim() || model;
+
   async function runPrompt(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ systemPrompt, userPrompt, model, temperature }),
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Request failed");
-      setResult(data);
+      if (usingClientKey && apiKey) {
+        // Direct browser → provider call. Key never leaves the browser.
+        const data = await callClientLLM({
+          apiKey,
+          baseUrl,
+          model: effectiveModel,
+          systemPrompt,
+          userPrompt,
+          temperature,
+        });
+        setResult(data);
+      } else {
+        // Demo mode — call our server. No key is sent.
+        const response = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ systemPrompt, userPrompt, model: effectiveModel, temperature }),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Request failed");
+        setResult(data);
+      }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Unknown error");
     } finally {
@@ -123,12 +203,48 @@ export default function Home() {
     setError("");
   }
 
+  async function handleTestConnection() {
+    setTesting(true);
+    setTestResult({ status: "idle" });
+    try {
+      const res = await testClientConnection(apiKey, baseUrl);
+      setTestResult(
+        res.ok
+          ? { status: "ok", message: "Connection successful." }
+          : { status: "fail", message: res.message },
+      );
+    } catch (caught) {
+      setTestResult({
+        status: "fail",
+        message: caught instanceof Error ? caught.message : "Connection failed.",
+      });
+    } finally {
+      setTesting(false);
+    }
+  }
+
+  function handleClearCredentials() {
+    setApiKey("");
+    setCustomModel("");
+    setBaseUrl(DEFAULT_BASE_URL);
+    setTestResult({ status: "idle" });
+    if (typeof window !== "undefined") {
+      try {
+        window.localStorage.removeItem(LS_KEYS.apiKey);
+        window.localStorage.removeItem(LS_KEYS.baseUrl);
+        window.localStorage.removeItem(LS_KEYS.customModel);
+      } catch {
+        // ignore
+      }
+    }
+  }
+
   return (
     <>
       <header className="nav">
         <div className="navInner">
           <a className="brand" href="#top" aria-label="Rikka Studio home">
-            <span className="logoMark" aria-hidden="true">R</span>
+            <img src="/favicon.png" alt="Rikka" className="logoImg" width={32} height={32} />
             <span className="brandText">Rikka Studio</span>
           </a>
           <nav className="navLinks" aria-label="Primary">
@@ -230,8 +346,8 @@ export default function Home() {
           </div>
           <div className="featureCard">
             <div className="featureIcon">◇</div>
-            <h3>OpenAI-compatible</h3>
-            <p>Server-side keys, swappable provider URL. Demo mode runs without any key.</p>
+            <h3>Bring your own key</h3>
+            <p>Bring your own API key or use the demo mode. Keys stay in your browser, never on our server.</p>
           </div>
         </section>
 
@@ -242,8 +358,12 @@ export default function Home() {
                 <p className="eyebrow">Input</p>
                 <h2>Prompt run</h2>
               </div>
-              <span className="pill" title="API keys never reach the browser">
-                <span className="pillDot" /> server-side keys
+              <span
+                className="pill"
+                title={usingClientKey ? "Using your own API key from the browser" : "Demo mode — no API key set"}
+              >
+                <span className={`pillDot ${usingClientKey ? "pillDotAccent" : ""}`} />
+                {usingClientKey ? "your key" : "demo mode"}
               </span>
             </div>
 
@@ -308,6 +428,119 @@ export default function Home() {
               </label>
             </div>
 
+            <label className="customModelLabel">
+              Or type a custom model name
+              <input
+                type="text"
+                value={customModel}
+                onChange={(event) => setCustomModel(event.target.value)}
+                placeholder="overrides the dropdown when filled"
+                autoComplete="off"
+                spellCheck={false}
+              />
+            </label>
+
+            {/* ─── API settings panel (collapsible, client-side keys only) ─── */}
+            <div className="apiPanel">
+              <button
+                type="button"
+                className="apiPanelToggle"
+                onClick={() => setShowApiPanel((v) => !v)}
+                aria-expanded={showApiPanel}
+                aria-controls="api-settings"
+              >
+                <span className="lockIcon" aria-hidden="true">🔒</span>
+                <span className="apiPanelTitle">API settings</span>
+                <span className="apiPanelStatus">
+                  {usingClientKey ? "using your key" : "demo mode"}
+                </span>
+                <span className="apiPanelChevron" aria-hidden="true">
+                  {showApiPanel ? "▴" : "▾"}
+                </span>
+              </button>
+
+              {showApiPanel ? (
+                <div className="apiPanelBody" id="api-settings">
+                  <label className="apiKeyLabel">
+                    API key
+                    <span className="inputWithButton">
+                      <input
+                        type={apiKeyVisible ? "text" : "password"}
+                        value={apiKey}
+                        onChange={(event) => setApiKey(event.target.value)}
+                        placeholder="sk-… (stored in your browser only)"
+                        autoComplete="off"
+                        spellCheck={false}
+                      />
+                      <button
+                        type="button"
+                        className="btn btnGhost btnCompact btnIcon"
+                        onClick={() => setApiKeyVisible((v) => !v)}
+                        title={apiKeyVisible ? "Hide key" : "Show key"}
+                        aria-label={apiKeyVisible ? "Hide key" : "Show key"}
+                      >
+                        {apiKeyVisible ? "🙈" : "👁"}
+                      </button>
+                    </span>
+                  </label>
+
+                  <label className={baseUrlError ? "fieldError" : ""}>
+                    Base URL
+                    <input
+                      type="text"
+                      value={baseUrl}
+                      onChange={(event) => setBaseUrl(event.target.value)}
+                      placeholder={DEFAULT_BASE_URL}
+                      autoComplete="off"
+                      spellCheck={false}
+                    />
+                    {baseUrlError ? (
+                      <span className="fieldMessage fieldMessageError">{baseUrlError}</span>
+                    ) : null}
+                  </label>
+
+                  <div className="apiPanelActions">
+                    <button
+                      type="button"
+                      className="btn btnGhost btnCompact"
+                      onClick={handleTestConnection}
+                      disabled={testing || !apiKey || Boolean(baseUrlError)}
+                    >
+                      {testing ? "Testing…" : "Test connection"}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btnGhost btnCompact"
+                      onClick={handleClearCredentials}
+                    >
+                      Clear
+                    </button>
+                  </div>
+
+                  {testResult.status !== "idle" ? (
+                    <p
+                      className={
+                        testResult.status === "ok"
+                          ? "testResult testOk"
+                          : "testResult testFail"
+                      }
+                    >
+                      {testResult.status === "ok"
+                        ? "✓ "
+                        : "✗ "}
+                      {testResult.message}
+                    </p>
+                  ) : null}
+
+                  <p className="apiWarning">
+                    <span className="warningIcon" aria-hidden="true">⚠</span>
+                    Your API key is stored locally in your browser only and never transmitted to
+                    our servers. Calls go directly from your browser to your provider.
+                  </p>
+                </div>
+              ) : null}
+            </div>
+
             <div className="actions">
               <button type="submit" className="btn btnPrimary" disabled={loading}>
                 {loading ? "Running…" : "Run prompt"}
@@ -368,8 +601,8 @@ export default function Home() {
                 <div className="emptyIcon" aria-hidden="true">◇</div>
                 <p className="emptyTitle">No run yet.</p>
                 <p>
-                  Pick a sample prompt above, or write your own. Demo mode works without an API
-                  key. API mode uses server environment variables.
+                  Add your API key in API settings below to call your provider directly from the
+                  browser, or leave it blank to use demo mode.
                 </p>
               </div>
             )}
@@ -388,7 +621,10 @@ export default function Home() {
             <li className="howStep">
               <span className="stepNum">02</span>
               <h3>Run it</h3>
-              <p>Demo mode returns a mock; API mode hits an OpenAI-compatible endpoint.</p>
+              <p>
+                Bring your own API key to call your provider from the browser, or use demo mode
+                without any key.
+              </p>
             </li>
             <li className="howStep">
               <span className="stepNum">03</span>
@@ -444,7 +680,13 @@ export default function Home() {
       <footer className="footer">
         <div className="footerInner">
           <div className="footerBrand">
-            <span className="logoMark logoMarkSmall" aria-hidden="true">R</span>
+            <img
+              src="/favicon.png"
+              alt="Rikka"
+              className="logoImg logoImgSmall"
+              width={22}
+              height={22}
+            />
             <span>Rikka Studio</span>
           </div>
           <div className="footerLinks">
