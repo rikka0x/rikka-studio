@@ -155,6 +155,7 @@ export default function Home() {
               <br />
               <span className="gradientText">cleanly documented.</span>
             </h1>
+            <p className="jpAccent">邪王真眼 — Wielder of the Tyrant's Eye</p>
             <p className="lede">
               A small web workspace for testing prompts, reviewing model outputs, and exporting
               reusable notes through any OpenAI-compatible API.
@@ -205,6 +206,15 @@ export default function Home() {
               </p>
             </div>
           </aside>
+
+          <div className="heroCharacter">
+            <div className="magicCircle" style={{ width: 200, height: 200, top: 40, right: 20 }} />
+            <span className="sparkle" style={{ top: 20, left: 30 }}>✦</span>
+            <span className="sparkle" style={{ top: 80, right: 50 }}>✧</span>
+            <span className="sparkle" style={{ bottom: 40, left: 60 }}>✦</span>
+            {/* Character image — placed when subagent returns */}
+            <img src="/rikka-hero.png" alt="Rikka Takanashi" style={{ display: 'none' }} />
+          </div>
         </section>
 
         <section className="features">
@@ -448,7 +458,7 @@ export default function Home() {
             <a href="#studio">Studio</a>
             <a href="#how">How it works</a>
           </div>
-          <p className="footerNote">© {new Date().getFullYear()} Rikka Studio · Deployed on Vercel</p>
+          <p className="footerNote">© {new Date().getFullYear()} Rikka Studio · 邪王真眼 · Deployed on Vercel</p>
         </div>
       </footer>
     </>
