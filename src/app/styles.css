@@ -875,8 +875,12 @@ pre {
   width: auto;
   height: auto;
   object-fit: contain;
-  filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.4)) drop-shadow(0 0 60px rgba(34, 211, 238, 0.2));
+  filter:
+    drop-shadow(0 0 20px rgba(139, 92, 246, 0.3))
+    drop-shadow(0 0 40px rgba(34, 211, 238, 0.15));
   animation: floatCharacter 4s ease-in-out infinite;
+  -webkit-mask-image: radial-gradient(ellipse 95% 100% at 50% 50%, #000 85%, transparent 100%);
+  mask-image: radial-gradient(ellipse 95% 100% at 50% 50%, #000 85%, transparent 100%);
 }
 
 /* ─── Custom model input ───────────────────────────────── */
