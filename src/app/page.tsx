@@ -330,7 +330,7 @@ export default function Home() {
             <span className="sparkle" style={{ top: 80, right: 50 }}>✧</span>
             <span className="sparkle" style={{ bottom: 40, left: 60 }}>✦</span>
             {/* Character image — placed when subagent returns */}
-            <img src="/rikka-hero.png" alt="Rikka Takanashi" />
+            <img src="/rikka-hero.gif" alt="Rikka Takanashi" />
           </div>
         </section>
 
