@@ -155,7 +155,7 @@ export default function Home() {
               <br />
               <span className="gradientText">cleanly documented.</span>
             </h1>
-            <p className="jpAccent">邪王真眼 — Wielder of the Tyrant's Eye</p>
+            <p className="jpAccent">{"邪王真眼 — Wielder of the Tyrant's Eye"}</p>
             <p className="lede">
               A small web workspace for testing prompts, reviewing model outputs, and exporting
               reusable notes through any OpenAI-compatible API.
@@ -213,7 +213,7 @@ export default function Home() {
             <span className="sparkle" style={{ top: 80, right: 50 }}>✧</span>
             <span className="sparkle" style={{ bottom: 40, left: 60 }}>✦</span>
             {/* Character image — placed when subagent returns */}
-            <img src="/rikka-hero.png" alt="Rikka Takanashi" style={{ display: 'none' }} />
+            <img src="/rikka-hero.png" alt="Rikka Takanashi" />
           </div>
         </section>
 
