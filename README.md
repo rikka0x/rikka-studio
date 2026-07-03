@@ -53,5 +53,3 @@ Do not run a long-lived Next.js dev server on a small controller VPS. The defaul
 ## Status
 
 Early public prototype. The first version is intentionally small: a clear interface, safe provider design, and exportable notes.
-
-<!-- badge update 1783103398 -->
