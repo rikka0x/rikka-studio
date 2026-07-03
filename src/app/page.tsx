@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import type { GenerateResponse } from "../lib/types";
+import { MODEL_OPTIONS, DEFAULT_MODEL } from "../lib/models";
 
 type SamplePreset = {
   id: string;
@@ -38,14 +39,6 @@ const SAMPLE_PRESETS: SamplePreset[] = [
   },
 ];
 
-const MODEL_OPTIONS = [
-  { value: "demo-model", label: "demo-model (offline mock)" },
-  { value: "gpt-4o-mini", label: "gpt-4o-mini" },
-  { value: "gpt-4o", label: "gpt-4o" },
-  { value: "claude-3-5-sonnet", label: "claude-3-5-sonnet" },
-  { value: "custom", label: "custom (set in .env)" },
-];
-
 const DEFAULT_PRESET = SAMPLE_PRESETS[0];
 
 function buildMarkdown(result: GenerateResponse | null, userPrompt: string, systemPrompt: string) {
@@ -71,7 +64,7 @@ function buildMarkdown(result: GenerateResponse | null, userPrompt: string, syst
 export default function Home() {
   const [systemPrompt, setSystemPrompt] = useState(DEFAULT_PRESET.systemPrompt);
   const [userPrompt, setUserPrompt] = useState(DEFAULT_PRESET.userPrompt);
-  const [model, setModel] = useState("demo-model");
+  const [model, setModel] = useState(DEFAULT_MODEL);
   const [temperature, setTemperature] = useState(0.7);
   const [result, setResult] = useState<GenerateResponse | null>(null);
   const [error, setError] = useState("");
