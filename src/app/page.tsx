@@ -16,27 +16,27 @@ type SamplePreset = {
 const SAMPLE_PRESETS: SamplePreset[] = [
   {
     id: "checklist",
-    label: "Product checklist",
-    description: "Turn a rough idea into an MVP checklist.",
-    systemPrompt: "You are a concise product engineer. Return structured notes with clear bullets.",
+    label: "Build checklist",
+    description: "Turn an idea into a structured implementation checklist.",
+    systemPrompt: "You are a senior product engineer. Return structured notes with clear, actionable bullets.",
     userPrompt:
-      "Turn this rough idea into a practical product checklist: a small web app for testing prompts and exporting notes.",
+      "Turn this idea into a practical implementation checklist: a web app for testing prompts and exporting results as markdown.",
   },
   {
     id: "review",
     label: "Code review",
-    description: "Spot issues and suggest refactors.",
-    systemPrompt: "You are a senior reviewer. Be honest, specific, and brief. Use bullets.",
+    description: "Review code for issues, edge cases, and refactors.",
+    systemPrompt: "You are a senior code reviewer. Be honest, specific, and brief. Use bullets.",
     userPrompt:
-      "Review this idea: a Next.js app that lets users bring their own API key and call an OpenAI-compatible provider directly from the browser. What should I check before shipping?",
+      "Review this approach: a Next.js app that lets users bring their own API key and call an OpenAI-compatible provider directly from the browser. What edge cases should I handle?",
   },
   {
     id: "outline",
-    label: "Content outline",
-    description: "Draft an outline for a tutorial post.",
-    systemPrompt: "You are a clear technical writer. Keep it grounded and skimmable.",
+    label: "Doc outline",
+    description: "Draft a technical blog post or documentation outline.",
+    systemPrompt: "You are a clear technical writer. Keep it grounded, skimmable, and practical.",
     userPrompt:
-      "Outline a short tutorial post: how to build a small prompt-testing web app and deploy it on Vercel.",
+      "Outline a short technical post: how to build a prompt-testing web app with client-side API keys and deploy it on Vercel.",
   },
 ];
 
@@ -265,16 +265,17 @@ export default function Home() {
       <main className="shell" id="top">
         <section className="hero">
           <div className="heroCopy">
-            <p className="eyebrow">Rikka Studio</p>
+            <p className="eyebrow">{"邪王真眼 · Tyrant's Eye Toolkit"}</p>
             <h1>
-              Prompt experiments,
+              Test prompts.
               <br />
-              <span className="gradientText">cleanly documented.</span>
+              <span className="gradientText">Ship clean outputs.</span>
             </h1>
             <p className="jpAccent">{"邪王真眼 — Wielder of the Tyrant's Eye"}</p>
             <p className="lede">
-              A small web workspace for testing prompts, reviewing model outputs, and exporting
-              reusable notes through any OpenAI-compatible API.
+              An open-source prompt workspace for developers. Bring your own API key,
+              test against any OpenAI-compatible model, and export results as markdown —
+              all from the browser, all private.
             </p>
             <div className="heroActions">
               <a className="btn btnPrimary" href="#studio">
@@ -307,18 +308,18 @@ export default function Home() {
                 <span className="termFlag"> --model</span> gpt-4o-mini
               </p>
               <p className="termLine termMuted">
-                <span className="termPrompt">›</span> system: concise AI assistant
+                <span className="termPrompt">›</span> system: senior code reviewer
               </p>
               <p className="termLine termMuted">
-                <span className="termPrompt">›</span> user: turn this idea into a checklist
+                <span className="termPrompt">›</span> user: review this API route for edge cases
               </p>
               <p className="termLine termOut">
-                <span className="termArrow">→</span> # Practical Checklist
+                <span className="termArrow">→</span> # Review Notes
               </p>
-              <p className="termLine termOut">- Define MVP scope</p>
-              <p className="termLine termOut">- Cover empty / loading / error states</p>
+              <p className="termLine termOut">- Validate request body shape</p>
+              <p className="termLine termOut">- Bound input length to 8KB</p>
               <p className="termLine termOut termTyping">
-                - Add ⌘+Enter shortcut<span className="termCaret" />
+                - Sanitize error details<span className="termCaret" />
               </p>
             </div>
           </aside>
@@ -337,17 +338,17 @@ export default function Home() {
           <div className="featureCard">
             <div className="featureIcon">⌁</div>
             <h3>Prompt testing</h3>
-            <p>System + user prompts with model and temperature controls, all in one panel.</p>
+            <p>System + user prompts with configurable model, temperature, and custom endpoints — all in one panel.</p>
           </div>
           <div className="featureCard">
             <div className="featureIcon">↗</div>
             <h3>Markdown export</h3>
-            <p>One-click copy of the full run as markdown. Drop it straight into your notes.</p>
+            <p>One-click copy of the full run — system prompt, user prompt, and output — formatted as clean markdown.</p>
           </div>
           <div className="featureCard">
             <div className="featureIcon">◇</div>
-            <h3>Bring your own key</h3>
-            <p>Bring your own API key or use the demo mode. Keys stay in your browser, never on our server.</p>
+            <h3>Private by default</h3>
+            <p>Bring your own API key — it stays in your browser, never touches our server. Demo mode works without any key.</p>
           </div>
         </section>
 
@@ -601,8 +602,8 @@ export default function Home() {
                 <div className="emptyIcon" aria-hidden="true">◇</div>
                 <p className="emptyTitle">No run yet.</p>
                 <p>
-                  Add your API key in API settings below to call your provider directly from the
-                  browser, or leave it blank to use demo mode.
+                  Add your API key in API settings to call your provider directly, or leave it
+                  blank to use demo mode. Your key never leaves the browser.
                 </p>
               </div>
             )}
@@ -611,54 +612,54 @@ export default function Home() {
 
         <section className="how" id="how">
           <p className="eyebrow">How it works</p>
-          <h2 className="sectionTitle">Three steps, no setup needed for the demo.</h2>
+          <h2 className="sectionTitle">Three steps. No sign-up, no backend setup.</h2>
           <ol className="howGrid">
             <li className="howStep">
               <span className="stepNum">01</span>
-              <h3>Write a prompt</h3>
+              <h3>Write your prompt</h3>
               <p>Use a sample preset or type your own system and user prompts.</p>
             </li>
             <li className="howStep">
               <span className="stepNum">02</span>
               <h3>Run it</h3>
               <p>
-                Bring your own API key to call your provider from the browser, or use demo mode
-                without any key.
+                Add your API key to call any OpenAI-compatible provider directly from the browser,
+                or use demo mode without any key.
               </p>
             </li>
             <li className="howStep">
               <span className="stepNum">03</span>
-              <h3>Export markdown</h3>
-              <p>Copy the run as markdown and paste it into your notes or PR.</p>
+              <h3>Export as markdown</h3>
+              <p>Copy the full run — prompts, model, and output — as clean markdown for your notes or PR.</p>
             </li>
           </ol>
         </section>
 
         <section className="cases" id="cases">
           <p className="eyebrow">Use cases</p>
-          <h2 className="sectionTitle">Built for the small loops you actually do.</h2>
+          <h2 className="sectionTitle">Built for the loops developers actually run.</h2>
           <div className="caseGrid">
             <div className="caseCard">
               <h3>Prompt engineering</h3>
-              <p>Iterate on system prompts side-by-side and capture the runs you want to keep.</p>
+              <p>Iterate on system prompts, compare outputs across models, and capture the runs worth keeping.</p>
             </div>
             <div className="caseCard">
               <h3>Content drafting</h3>
-              <p>Spin up outlines, intros, and titles, then paste straight into your editor.</p>
+              <p>Generate outlines, intros, and documentation drafts — paste straight into your editor.</p>
             </div>
             <div className="caseCard">
               <h3>Code review prompts</h3>
-              <p>Test reviewer-style prompts before wiring them into your CI or dev tools.</p>
+              <p>Test reviewer-style prompts before wiring them into your CI or automation pipeline.</p>
             </div>
           </div>
         </section>
 
         <section className="cta">
           <div className="ctaInner">
-            <h2>Open source. Yours to fork.</h2>
+            <h2>Open source. Private by design. Yours to fork.</h2>
             <p>
-              Rikka Studio is a small, honest reference for prompt UIs. Read the code, copy the
-              ideas, ship your own.
+              Rikka Studio is a lightweight, honest prompt-testing tool — no tracking, no backend
+              dependencies, no lock-in. Read the code, fork it, make it yours.
             </p>
             <div className="heroActions">
               <a
@@ -667,7 +668,7 @@ export default function Home() {
                 target="_blank"
                 rel="noreferrer noopener"
               >
-                Star on GitHub
+                Fork on GitHub
               </a>
               <a className="btn btnGhost" href="#studio">
                 Try the demo

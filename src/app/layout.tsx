@@ -2,27 +2,27 @@ import type { ReactNode } from "react";
 import "./styles.css";
 
 export const metadata = {
-  title: "Rikka Studio — Prompt experiments, cleanly documented",
+  title: "Rikka Studio — Private prompt testing with your own API key",
   description:
-    "A small web workspace for testing prompts, reviewing model outputs, and exporting reusable notes through any OpenAI-compatible API.",
+    "An open-source prompt workspace for developers. Bring your own API key, test against any OpenAI-compatible model, and export results as markdown. Keys stay in your browser, never on the server.",
   metadataBase: new URL("https://rikka-studio.vercel.app"),
   icons: {
-    icon: "/favicon.png",
+    icon: "/logo.png",
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "Rikka Studio",
+    title: "Rikka Studio — Private Prompt Testing",
     description:
-      "Prompt experiments, cleanly documented. Test prompts and export markdown via OpenAI-compatible APIs.",
+      "Bring your own API key, test against any OpenAI-compatible model, and export results as markdown. Private by default.",
     url: "https://rikka-studio.vercel.app",
     siteName: "Rikka Studio",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Rikka Studio",
+    title: "Rikka Studio — Private Prompt Testing",
     description:
-      "Prompt experiments, cleanly documented. Test prompts and export markdown via OpenAI-compatible APIs.",
+      "Bring your own API key, test against any OpenAI-compatible model, and export results as markdown.",
   },
 };
 
