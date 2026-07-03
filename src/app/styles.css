@@ -868,6 +868,7 @@ pre {
   align-items: center;
   justify-content: center;
   min-height: 380px;
+  isolation: isolate;
 }
 .heroCharacter img {
   max-width: 100%;
@@ -877,6 +878,7 @@ pre {
   object-fit: contain;
   border-radius: 16px;
   overflow: hidden;
+  mix-blend-mode: screen;
   filter:
     drop-shadow(0 0 20px rgba(139, 92, 246, 0.3))
     drop-shadow(0 0 40px rgba(34, 211, 238, 0.15));
