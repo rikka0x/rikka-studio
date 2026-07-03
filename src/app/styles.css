@@ -852,3 +852,184 @@ pre {
   .hero { grid-template-columns: 1fr; gap: 32px; }
   .terminal { order: 2; }
 }
+
+/* ─── Logo image ───────────────────────────────────────── */
+.logoImg {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: cover;
+  box-shadow: 0 6px 22px rgba(139, 92, 246, 0.35);
+}
+.logoImg.logoImgSmall {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+/* ─── Custom model input ───────────────────────────────── */
+.customModelLabel {
+  margin-top: -4px;
+}
+.customModelLabel input[type="text"]::placeholder {
+  color: var(--muted-soft);
+}
+
+/* ─── API settings panel ───────────────────────────────── */
+.apiPanel {
+  margin: 4px 0 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--panel-soft);
+  overflow: hidden;
+}
+
+.apiPanelToggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+.apiPanelToggle:hover { background: rgba(139, 92, 246, 0.06); }
+
+.lockIcon {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.apiPanelTitle {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 12.5px;
+  color: var(--text);
+}
+
+.apiPanelStatus {
+  margin-left: auto;
+  font-size: 11.5px;
+  color: var(--accent-2);
+  background: var(--accent-2-soft);
+  padding: 3px 9px;
+  border-radius: 999px;
+  text-transform: lowercase;
+  font-weight: 700;
+}
+
+.apiPanelChevron {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.apiPanelBody {
+  display: grid;
+  gap: 14px;
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 16px;
+}
+
+/* Compound input with show/hide button */
+.apiKeyLabel { position: relative; }
+
+.inputWithButton {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.inputWithButton input {
+  width: 100%;
+  padding-right: 54px;
+}
+
+.btnIcon {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.fieldError input {
+  border-color: var(--danger);
+}
+
+.fieldMessage {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-top: 6px;
+}
+.fieldMessageError { color: var(--danger); }
+
+.apiPanelActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.testResult {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  text-transform: none;
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+.testOk {
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+  border-color: rgba(74, 222, 128, 0.3);
+}
+.testFail {
+  color: var(--danger);
+  background: rgba(251, 113, 133, 0.1);
+  border-color: rgba(251, 113, 133, 0.3);
+  word-break: break-word;
+}
+
+.apiWarning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-left-width: 3px;
+  border-radius: 10px;
+  background: var(--accent-3-soft);
+  color: #fde68a;
+  font-size: 12px;
+  line-height: 1.55;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.warningIcon {
+  flex: none;
+  margin-top: 1px;
+  font-size: 14px;
+}
+
+/* Accent pill dot for "using your key" mode */
+.pillDot.pillDotAccent {
+  background: var(--accent-2);
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.7);
+}
